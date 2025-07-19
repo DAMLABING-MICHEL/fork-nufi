@@ -1,31 +1,90 @@
 import { NextFunction, Request, Response, Router } from 'express';
-import { CreateUserSchema } from '../dto/user-dto';
-import { registerUser } from '../service/user.service';
+import { CreateUserSchema, LoginUserSchema } from '../dto/user-dto';
+import { loginUser, registerUser } from '../service/user.service';
+import { setSessionData } from '../utils/SessionHelper';
 const userRoute = Router();
 
 userRoute.post('/login', (request: Request, response: Response, _next: NextFunction) => {
-    console.log(request.body);
-    response.send("User registered");
-});
+    const { success, error } = LoginUserSchema.safeParse(request.body);
+    if(success) {
+        loginUser(request.body.login, request.body.password)
+            .then(user => {
+                setSessionData({ 
+                    userId: user.id
+                }, request);
+                response.redirect("/");
+            })
+            .catch(err => {
+                setSessionData({ 
+                    formState:  {
+                        errors: {},
+                        data: request.body
+                    },
+                    message: {
+                        type: 'error',
+                        content: err.message
+                    }
+                }, request);
+                response.redirect("/login");
+            })
+    }
+    else {
+        let errors: string[] = [];
+        error?.errors.forEach((err) => {
+            errors.push(err.message);
+        });
+        setSessionData({ 
+            formState:  {
+                errors: {},
+                data: request.body
+            },
+            message: {
+                type: 'error',
+                content: errors.join(", ")
+            }
+        }, request);
+        response.redirect("/login");
+    }
+})
 
 userRoute.post('/register', (request: Request, response: Response, _next: NextFunction) => {
-    console.log(request.body);
     const { success, error } = CreateUserSchema.safeParse(request.body);
     if(success) {
-        registerUser(request.body).then(user => {
-            response.render('home', {
-                username: user.username
-            })
+        registerUser(request.body)
+        .then(user => {
+            setSessionData({ 
+                userId: user.id, 
+                message: {
+                    type: 'success', 
+                    content: "Your account has been successfully created"
+                } 
+            }, request);
+            response.redirect("/");
+        })
+        .catch(err => {
+            console.log(err);
+            const errors = {"0": "An error occured, the user is not saved"};
+            setSessionData({ 
+                formState:  {
+                    errors: errors,
+                    data: request.body
+                }
+            }, request);
+            response.redirect("/login");
         });
     }
     else {
-        response.render('login', {
-            error: error?.errors
-                    .map((t) => ({
-                        path: t.path[0] ?? '',
-                        message: t.message
-                    }))
-        })
+        let errors: any = {};
+        error?.errors.forEach((err) => {
+            errors[err.path[0]] = err.message;
+        });
+        setSessionData({ 
+            formState:  {
+                errors: errors,
+                data: request.body
+            }
+        }, request);
+        response.redirect("/login");
     }
 });
 

@@ -5,8 +5,13 @@ export const CreateUserSchema = z.object({
     password: z.string().min(6, "Password must be at least 6 characters long"),
     lastName: z.string().nonempty("Last name is required"),
     firstName: z.string().optional(),
-    email: z.string().email().optional()
-}).strict();
+    email: z.union([z.literal(''), z.string().email()]).optional(),
+});
+
+export const LoginUserSchema = z.object({
+    login: z.string().nonempty("Username or email is required"),
+    password: z.string().nonempty("Password is required")
+});
 
 export type UserCreateDTO = z.infer<typeof CreateUserSchema>;
 

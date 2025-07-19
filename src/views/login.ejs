@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <%- include('partials/header.ejs', {pageTitle: "Nufi | Login"}); %>
@@ -6,7 +7,7 @@
 <body>
     <div class="container" id="main-container">
         <div class="form-container sign-up-container">
-            <form action="/user/register" method="post">
+            <form action="/user/register" method="post" onsubmit="handleSignupSubmit(event)">
                 <h1>Create Account</h1>
                 <div class="social-container">
                     <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
@@ -14,47 +15,108 @@
                     <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
                 </div>
                 <span>or fill your information to register</span>
-                <input 
-                    type="text" 
-                    name="username" 
-                    placeholder="Username" required/>
+                <div class="position-relative w-100">
+                    <input
+                        type="text" 
+                        name="username" 
+                        placeholder="Username" required
+                        value="<%= formState?.data?.username %>" />
+                    <% if (!!formState?.errors["username"]) { %>
+                        <div 
+                            class="position-absolute text-danger error-flag"
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="top" 
+                            title="<%= formState?.errors["username"] %>"
+                        >
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                        </div>
+                    <% } %>
+                </div>
                 <div class="d-flex gap-2">
-                    <div class="flex-1">
+                    <div class="flex-1 position-relative">
                         <input 
                             type="password" 
                             name="password"
-                            placeholder="Password" required />
+                            placeholder="Password" required 
+                            value="<%= formState?.data?.password %>"/>
+                        <% if (!!formState?.errors["password"]) { %>
+                            <div 
+                                class="position-absolute text-danger error-flag"
+                                data-bs-toggle="tooltip" 
+                                data-bs-placement="top" 
+                                title="<%= formState?.errors["password"] %>"
+                            >
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                            </div>
+                        <% } %>
                     </div>
-                    <div class="flex-1">
+                    <div class="flex-1 position-relative">
                         <input 
                             type="password" 
-                            name="password-confirm" 
-                            placeholder="Confirm pass..." required />
+                            name="passwordConfirm" 
+                            placeholder="Confirm pass..." required 
+                            value="<%= formState?.data?.password %>"/>
                     </div>
                 </div>
                 <div class="d-flex gap-2">
-                    <div class="flex-1">
+                    <div class="flex-1 position-relative">
                         <input 
                             type="text" 
                             name="lastName" 
-                            placeholder="Last name" required />
+                            placeholder="Last name" required 
+                            value="<%= formState?.data?.lastName %>"/>
+                        <% if (!!formState?.errors["lastName"]) { %>
+                            <div 
+                                class="position-absolute text-danger error-flag"
+                                data-bs-toggle="tooltip" 
+                                data-bs-placement="top" 
+                                title="<%= formState?.errors["lastName"] %>"
+                            >
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                            </div>
+                        <% } %>
                     </div>
-                    <div class="flex-1">
+                    <div class="flex-1 position-relative">
                         <input 
                             type="text" 
                             name="firstName" 
-                            placeholder="First name" />
+                            placeholder="First name" 
+                            value="<%= formState?.data?.firstName %>"/>
+                        <% if (!!formState?.errors["firstName"]) { %>
+                            <div 
+                                class="position-absolute text-danger error-flag"
+                                data-bs-toggle="tooltip" 
+                                data-bs-placement="top" 
+                                title="<%= formState?.errors["firstName"] %>"
+                            >
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                            </div>
+                        <% } %>
                     </div>
                 </div>
-                <input 
-                    type="email" 
-                    name="email" 
-                    placeholder="Email">
+                <div class="position-relative w-100">
+                    <input 
+                        type="email" 
+                        name="email" 
+                        placeholder="Email"
+                        value="<%= formState?.data?.email %>"/>
+                    <% if (!!formState?.errors["email"]) { %>
+                        <div 
+                            class="position-absolute text-danger error-flag"
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="top" 
+                            title="<%= formState?.errors["email"] %>"
+                        >
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                        </div>
+                    <% } %>
+                </div>
+                <input type="hidden" name="formType" value="register" id="<%= formState?.data?.formType === 'register'? 'formType' : undefined %>"/>
                 <button type="submit">Sign Up</button>
             </form>
         </div>
         <div class="form-container sign-in-container">
-            <form action="/user/login" method="post">
+            <form action="/user/login" method="post" onsubmit="handleSigninSubmit(event)">
                 <h1>Sign in</h1>
                 <div class="social-container">
                     <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
@@ -62,9 +124,18 @@
                     <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
                 </div>
                 <span>or use your account</span>
-                <input type="text" name="username" placeholder="Username or email"/>
-                <input type="password" name="password" placeholder="Password"/>
+                <input 
+                    type="text" required
+                    name="login" 
+                    placeholder="Username or email"
+                    value="<%= formState?.data?.login %>"/>
+                <input 
+                    type="password" required
+                    name="password" 
+                    placeholder="Password"
+                    value="<%= formState?.data?.password %>"/>
                 <!-- <a href="#">Forgot your password?</a> -->
+                <input type="hidden" name="formType" value="login" id="<%= formState?.data?.formType === 'login'? 'formType' : undefined %>"/>
                 <button type="submit">Sign In</button>
             </form>
         </div>
@@ -86,5 +157,8 @@
 
     <%- include('partials/footer.ejs'); %>
     <script src="assets/js/login-page.js"></script>
+    <script>
+        var serverMessage = '<%- JSON.stringify(message) %>';
+    </script>
 </body>
 </html>

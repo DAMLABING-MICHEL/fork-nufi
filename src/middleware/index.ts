@@ -1,17 +1,21 @@
 import { NextFunction, Request, Response, Router } from "express";
 import userRoute from "./user.middleware";
+import { getSessionData } from "../utils/SessionHelper";
 
 const indexRoute = Router();
 
-indexRoute.get('', (_request: Request, response: Response, _next: NextFunction) => {
+indexRoute.get('', (request: Request, response: Response, _next: NextFunction) => {
+    const data = getSessionData(request);
     response.render("home", {
-        username: undefined
+        message: data?.message
     });
 });
 
-indexRoute.get('/login', (_request: Request, response: Response, _next: NextFunction) => {
+indexRoute.get('/login', (request: Request, response: Response, _next: NextFunction) => {
+    const data = getSessionData(request);
     response.render("login", {
-        error: undefined
+        formState: data?.formState,
+        message: data?.message
     });
 });
 

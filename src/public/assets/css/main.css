@@ -19,3 +19,8 @@ body {
 	height: 100vh;
 	margin: -20px 0 50px;
 }
+
+.error-flag {
+	top: calc(50% - 12px);
+	left: -8px;
+}

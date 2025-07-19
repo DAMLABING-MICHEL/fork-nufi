@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <%- include('partials/header.ejs', {pageTitle: "Nufi | Notifications"}); %>
@@ -5,11 +6,12 @@
 <body>
     <div class="container">
         <h1 class="text-center">Nufi is working!</h1>
-        <% if (!!username) { %>
-            <p>username: <%= username %> </p>
-        <% } %>
+        <h1 x-data="{ message: 'I ❤️ Alpine' }" x-text="message" class="text-center"></h1>
     </div>
 
     <%- include('partials/footer.ejs'); %>
+    <script>
+        var serverMessage = '<%- JSON.stringify(message) %>';
+    </script>
 </body>
 </html>

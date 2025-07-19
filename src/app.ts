@@ -1,4 +1,5 @@
 import express from 'express';
+import cookieSession from 'cookie-session';
 import 'dotenv/config';
 import path from 'path';
 import indexRoute from './middleware';
@@ -12,6 +13,14 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cookieSession({
+  name: 'session',
+  secret: process.env.NF_COOKIE_SECRET,
+  // Options
+  maxAge: 24 * 60 * 60 * 1000, // 24 hours
+  httpOnly: true
+}))
 
 app.use(indexRoute);
 

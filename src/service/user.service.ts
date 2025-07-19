@@ -31,4 +31,5 @@ export async function loginUser(login: string, password: string) {
     if(!isPasswordMatch) {
         throw new Error("Invalid credentials");
     }
+    return user;
 }

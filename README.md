@@ -66,18 +66,19 @@ This section will guide you through setting up the project locally.
     # .env
     DATABASE_URL="mongodb+srv://<username>:<password>@<your-cluster-url>/<your-database-name>?retryWrites=true&w=majority"
     PORT=3000
-    NODE_ENV=development
+    NF_COOKIE_SECRET=<cookie-secret>
     # Add any other environment variables here
     ```
     Replace `<username>`, `<password>`, `<your-cluster-url>`, and `<your-database-name>` with your MongoDB connection details.
+    Replace `<cookie-secret>` by your own secret.
 
-2.  **Generate Prisma Client:**
+3.  **Generate Prisma Client:**
     ```bash
     npx prisma generate
     ```
     This command reads your `schema.prisma` file and generates the Prisma Client based on your database schema.
 
-3.  **Push Prisma Schema to Database (for initial setup or schema changes):**
+4.  **Push Prisma Schema to Database (for initial setup or schema changes):**
     If you're starting with an empty database or have made changes to your `schema.prisma` file, you'll need to push the schema to MongoDB. Prisma will create the necessary collections.
     ```bash
     npx prisma db push

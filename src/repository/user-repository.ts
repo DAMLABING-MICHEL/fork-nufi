@@ -1,5 +1,6 @@
 import { UserCreateDTO } from "../dto/user-dto";
 import prisma from "../lib/prisma-client";
+import { UserUpdateDTO } from "../dto/user-dto";
 
 export async function createUser(user: UserCreateDTO) {
     const savedUser = await prisma.user.create({
@@ -47,4 +48,24 @@ export async function getOneUser(id?: string, username?: string, email?: string)
         throw new Error("At least one of id, username or email must be provided");
     }
     return user;
+}
+
+/**
+ * Updates a user's information
+ * @param id 
+ * @param userUpdateDTO 
+ */
+export async function updateUser(id: string, userUpdateDTO: UserUpdateDTO) {
+    const updatedUser = await prisma.user.update({
+        where: {
+            id: id
+        },
+        data: {
+            username: userUpdateDTO.username,
+            lastName: userUpdateDTO.lastName,
+            firstName: userUpdateDTO.firstName,
+            email: userUpdateDTO.email
+        }
+    });
+    return updatedUser;
 }

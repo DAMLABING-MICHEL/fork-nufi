@@ -13,7 +13,15 @@ export const LoginUserSchema = z.object({
     password: z.string().nonempty("Password is required")
 });
 
+export const UpdateUserSchema = z.object({
+    username: z.string().min(3, "User name must be at least 3 characters long").optional(),
+    lastName: z.string().nonempty("Last name is required").optional(),
+    firstName: z.string().optional(),
+    email: z.union([z.literal(''), z.string().email()]).optional(),
+});
+
 export type UserCreateDTO = z.infer<typeof CreateUserSchema>;
+export type UserUpdateDTO = z.infer<typeof UpdateUserSchema>;
 
 export interface UserDTO {
     id: string;

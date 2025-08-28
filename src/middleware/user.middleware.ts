@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response, Router } from 'express';
-import { CreateUserSchema, LoginUserSchema } from '../dto/user-dto';
-import { loginUser, registerUser } from '../service/user.service';
-import { setSessionData } from '../utils/SessionHelper';
+import { CreateUserSchema, LoginUserSchema, UpdateUserSchema } from '../dto/user-dto';
+import { loginUser, registerUser, updateUser } from '../service/user.service';
+import { getSessionData, setSessionData } from '../utils/SessionHelper';
 const userRoute = Router();
 
 userRoute.post('/login', (request: Request, response: Response, _next: NextFunction) => {
@@ -12,9 +12,9 @@ userRoute.post('/login', (request: Request, response: Response, _next: NextFunct
                 setSessionData({ 
                     userId: user.id
                 }, request);
-                response.redirect("/");
+                response.redirect("/profile");
             })
-            .catch(err => {
+            .catch((err: any) => {
                 setSessionData({ 
                     formState:  {
                         errors: {},
@@ -61,7 +61,7 @@ userRoute.post('/register', (request: Request, response: Response, _next: NextFu
             }, request);
             response.redirect("/");
         })
-        .catch(err => {
+        .catch((err: any) => {
             console.log(err);
             const errors = {"0": "An error occured, the user is not saved"};
             setSessionData({ 
@@ -88,4 +88,61 @@ userRoute.post('/register', (request: Request, response: Response, _next: NextFu
     }
 });
 
+userRoute.post('/update', async (request: Request, response: Response, _next: NextFunction) => {
+    const session = getSessionData(request);
+    
+    if(!session?.userId) {
+        setSessionData({ 
+            message: {
+                type: 'error',
+                content: "Vous devez être connecté pour mettre à jour votre profil."
+            }
+        }, request);
+        return response.redirect('/login');
+    }
+
+    const { success, error } = UpdateUserSchema.safeParse(request.body);
+    
+    if(success) {
+        try {
+            await updateUser(session.userId, request.body);
+            setSessionData({ 
+                message: {
+                    type: 'success',
+                    content: "Votre profil a été mis à jour avec succès."
+                }
+            }, request);
+
+            request.session!.save(() => {
+                response.redirect("/profile");
+            });
+
+        } catch (err: any) {
+            setSessionData({ 
+                formState:  {
+                    errors: {},
+                    data: request.body
+                },
+                message: {
+                    type: 'error',
+                    content: err.message
+                }
+            }, request);
+            response.redirect("/profile");
+        }
+    }
+    else {
+        let errors: any = {};
+        error?.errors.forEach((err) => {
+            errors[err.path[0]] = err.message;
+        });
+        setSessionData({ 
+            formState:  {
+                errors: errors,
+                data: request.body
+            }
+        }, request);
+        response.redirect("/profile");
+    }
+});
 export default userRoute;

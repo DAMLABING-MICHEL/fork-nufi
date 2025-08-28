@@ -4,11 +4,34 @@
     <%- include('partials/header.ejs', {pageTitle: "Nufi | Notifications"}); %>
 </head>
 <body>
-    <div class="container">
+    <!-- <div class="container">
         <h1 class="text-center">Nufi is working!</h1>
         <h1 x-data="{ message: 'I ❤️ Alpine' }" x-text="message" class="text-center"></h1>
-    </div>
+    </div> -->
+    <header class="navbar">
+        <div class="nav-links-items d-flex">
+            <div class="logo">
+                <img src="/favicon-32x32.png" alt="Nufi logo" class="logo-icon">
+                <span class="logo-text">Nufi</span>
+            </div>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/blog">Blog</a>
+            </nav>
+        </div>
+        <div class="nav-actions">
+            <a href="/login" class="btn btn-login">Log In</a>
+            <a href="/register" class="btn btn-primary">Get Started</a>
+        </div>
+    </header>
 
+    <main class="hero">
+        <p class="subtitle">Manage all your notifications from one place!</p>
+        <h1 class="title">Centralized notifications<br>for your apps.</h1>
+        <a href="/register" class="btn btn-cta">Get Started</a>
+    </main>
+
+    
     <%- include('partials/footer.ejs'); %>
     <script>
         var serverMessage = '<%- JSON.stringify(message) %>';

@@ -50,7 +50,6 @@ export async function loginUser(login: string, password: string) {
     return user;
 }
 
-// Nouvelle exportation de la fonction
 export async function getOneUser(id?: string, username?: string, email?: string) {
     let user;
     if (id !== undefined) {

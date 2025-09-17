@@ -1,106 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <%- include('partials/header.ejs', {pageTitle: "Nufi | Profil"}); %>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link rel="stylesheet" href="/css/main.css">
-  <link rel="stylesheet" href="/css/profile.css">
-</head>
-<body>
+  <head>
+    <%- include('partials/header.ejs', {pageTitle: "Nufi | Profil"}); %>
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/profile.css" />
+  </head>
+  <body>
+    <div class="profile-container">
+      <aside class="sidebar">
+        <a href="#" class="sidebar-icon">
+          <i class="fas fa-folder"></i>
+        </a>
+        <a href="#" class="sidebar-icon">
+          <i class="fas fa-bell"></i>
+        </a>
+        <a href="#" class="sidebar-icon active">
+          <i class="fas fa-user-circle"></i>
+        </a>
+      </aside>
 
-  <div class="profile-container">
-    <aside class="sidebar">
-      <a href="#" class="sidebar-icon">
-        <i class="fas fa-folder"></i>
-      </a>
-      <a href="#" class="sidebar-icon">
-        <i class="fas fa-bell"></i>
-      </a>
-      <a href="#" class="sidebar-icon active">
-        <i class="fas fa-user-circle"></i>
-      </a>
-    </aside>
+      <main class="profile-content">
+        <div class="profile-header">
+          <div class="avatar">
+            <%= user?.firstName?.charAt(0) ?? '' %><%= user?.lastName?.charAt(0)
+            ?? '' %>
+          </div>
+          <div class="user-info">
+            <h2><%= user?.firstName %> <%= user?.lastName %></h2>
+            <nav class="profile-nav">
+              <a href="#" class="nav-link active">Personal details</a>
+              <a href="#" class="nav-link">Notifications</a>
+              <a href="#" class="nav-link">Apps</a>
+            </nav>
+          </div>
+        </div>
 
-    <main class="profile-content">
-      <div class="profile-header">
-        <div class="avatar"><%= user?.firstName?.charAt(0) ?? '' %><%= user?.lastName?.charAt(0) ?? '' %></div>
-        <div class="user-info">
-          <h2><%= user?.firstName %> <%= user?.lastName %></h2>
-          <nav class="profile-nav">
-            <a href="#" class="nav-link active">Personal details</a>
-            <a href="#" class="nav-link">Notifications</a>
-            <a href="#" class="nav-link">Apps</a>
-          </nav>
+        <div class="details-section">
+          <div class="details-header">
+            <h3><%= user?.firstName %> <%= user?.lastName %></h3>
+            <a href="#" data-bs-toggle="modal" data-bs-target="#editModal"
+              ><i class="fas fa-pencil-alt"></i
+            ></a>
+          </div>
+          <div class="details-list">
+            <div class="detail-item">
+              <span class="detail-label">Username</span>
+              <span class="detail-value"><%= user?.username %></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Last name</span>
+              <span class="detail-value"><%= user?.lastName %></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">First name</span>
+              <span class="detail-value"><%= user?.firstName %></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Email</span>
+              <span class="detail-value"><%= user?.email %></span>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div
+      class="modal fade"
+      id="editModal"
+      tabindex="-1"
+      aria-labelledby="editModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form action="/user/update" method="post">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editModalLabel">Edit profile</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="username"
+                  name="username"
+                  value="<%= user?.username %>"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="firstName" class="form-label">First Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="firstName"
+                  name="firstName"
+                  value="<%= user?.firstName %>"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="lastName" class="form-label">Last Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="lastName"
+                  name="lastName"
+                  value="<%= user?.lastName %>"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="email" class="form-label">Email address</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  name="email"
+                  value="<%= user?.email %>"
+                />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+              <button type="submit" class="btn btn-primary">
+                Save changes
+              </button>
+            </div>
+          </form>
         </div>
       </div>
-
-      <div class="details-section">
-        <div class="details-header">
-          <h3><%= user?.firstName %> <%= user?.lastName %></h3>
-          <a href="#" data-bs-toggle="modal" data-bs-target="#editModal"><i class="fas fa-pencil-alt"></i></a>
-        </div>
-        <div class="details-list">
-          <div class="detail-item">
-            <span class="detail-label">Username</span>
-            <span class="detail-value"><%= user?.username %></span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Last name</span>
-            <span class="detail-value"><%= user?.lastName %></span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">First name</span>
-            <span class="detail-value"><%= user?.firstName %></span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Email</span>
-            <span class="detail-value"><%= user?.email %></span>
-          </div>
-        </div>
-      </div>
-
-    </main>
-  </div>
-
-  <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <form action="/user/update" method="post">
-    <div class="modal-header">
-        <h5 class="modal-title" id="editModalLabel">Edit profile</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
-    <div class="modal-body">
-        <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input type="text" class="form-control" id="username" name="username" value="<%= user?.username %>">
-        </div>
-        <div class="mb-3">
-            <label for="firstName" class="form-label">First Name</label>
-            <input type="text" class="form-control" id="firstName" name="firstName" value="<%= user?.firstName %>">
-        </div>
-        <div class="mb-3">
-            <label for="lastName" class="form-label">Last Name</label>
-            <input type="text" class="form-control" id="lastName" name="lastName" value="<%= user?.lastName %>">
-        </div>
-        <div class="mb-3">
-            <label for="email" class="form-label">Email address</label>
-            <input type="email" class="form-control" id="email" name="email" value="<%= user?.email %>">
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Save changes</button>
-    </div>
-</form>
-      </div>
-    </div>
-  </div>
 
-  <%- include('partials/footer.ejs'); %>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-  <script>
-    var serverMessage = '<%- JSON.stringify(message) %>';
-  </script>
-</body>
+    <%- include('partials/footer.ejs'); %>
+    <script
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      var serverMessage = "<%- JSON.stringify(message) %>";
+    </script>
+  </body>
 </html>

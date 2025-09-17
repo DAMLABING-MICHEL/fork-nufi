@@ -2,6 +2,7 @@ import { NextFunction, Request, Response, Router } from 'express';
 import { CreateUserSchema, LoginUserSchema, UpdateUserSchema } from '../dto/user-dto';
 import { loginUser, registerUser, updateUser } from '../service/user.service';
 import { getSessionData, setSessionData } from '../utils/SessionHelper';
+import { getOneUser } from "../service/user.service";
 const userRoute = Router();
 
 userRoute.post('/login', (request: Request, response: Response, _next: NextFunction) => {
@@ -88,6 +89,26 @@ userRoute.post('/register', (request: Request, response: Response, _next: NextFu
     }
 });
 
+userRoute.get('/profile', async (request: Request, response: Response, _next: NextFunction) => {
+    const data = getSessionData(request);
+    if (!data?.userId) {
+        setSessionData({
+            message: {
+                type: 'error',
+                content: "You must be logged in to view your profile."
+            }
+        }, request);
+        return response.redirect('/login');
+    }
+    const user = await getOneUser(data.userId);
+
+    response.render('profile', {
+        user,
+        message: data.message,
+        formState: data.formState
+    });
+});
+
 userRoute.post('/update', async (request: Request, response: Response, _next: NextFunction) => {
     const session = getSessionData(request);
     
@@ -95,7 +116,7 @@ userRoute.post('/update', async (request: Request, response: Response, _next: Ne
         setSessionData({ 
             message: {
                 type: 'error',
-                content: "Vous devez être connecté pour mettre à jour votre profil."
+                content: "You must be logged in to update your profile."
             }
         }, request);
         return response.redirect('/login');
@@ -109,7 +130,7 @@ userRoute.post('/update', async (request: Request, response: Response, _next: Ne
             setSessionData({ 
                 message: {
                     type: 'success',
-                    content: "Votre profil a été mis à jour avec succès."
+                    content: "Your profile has been successfully updated."
                 }
             }, request);
 
